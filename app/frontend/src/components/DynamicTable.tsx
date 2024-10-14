@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Paper,
-  SxProps,
   Table,
   TableBody,
   TableCell,
+  Box,
+  TableSortLabel,
   TableContainer,
   TableHead,
   TableRow,
@@ -17,25 +18,29 @@ interface Column {
   label: string;
   align?: "left" | "right" | "center";
   minWidth?: number;
+  sort?: boolean;
   renderCell: (value: any, column: Column, indexCol: string) => JSX.Element;
 }
 
 interface DynamicTableProps {
   columns: Column[];
   rows: any[];
-  styleProps?: SxProps;
   setPage: (page: number) => void;
   page: number;
+  handleSort: (columnId: string, isAsc: boolean) => void;
 }
 
 const DynamicTable: React.FC<DynamicTableProps> = ({
   columns,
   rows,
-  styleProps,
   setPage,
   page,
+  handleSort,
 }) => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("");
 
   const handleChangePage = (
     _event: React.MouseEvent<HTMLButtonElement> | null,
@@ -51,14 +56,21 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     setPage(0);
   };
   return (
-    <TableContainer component={Paper} sx={{ ...styleProps }}>
+    <TableContainer
+      component={Paper}
+      sx={{
+        backgroundColor: "#f5f5f5",
+        borderRadius: "10px",
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+      }}
+    >
       <Table>
         <TableHead>
           <TableRow>
             {columns.map((column) => (
               <TableCell
                 key={column.id}
-                align={column.align || "center"}
+                align={column.align ?? "center"}
                 sx={{
                   fontWeight: "bold",
                   backgroundColor: "#5c5d59",
@@ -67,7 +79,29 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                   padding: "16px",
                 }}
               >
-                {column.label}
+                {column.sort ? (
+                  <TableSortLabel
+                    active={orderBy === column.id}
+                    direction={
+                      orderBy === column.id ? (order as "asc" | "desc") : "desc"
+                    }
+                    onClick={() => {
+                      const isAsc = orderBy === column.id && order === "asc";
+                      handleSort(column.id, isAsc);
+                      setOrder(isAsc ? "desc" : "asc");
+                      setOrderBy(column.id);
+                    }}
+                    sx={{
+                      "& .MuiTableSortLabel-icon": {
+                        color: "#fff !important",
+                      },
+                    }}
+                  >
+                    {column.label}
+                  </TableSortLabel>
+                ) : (
+                  <Box> {column.label}</Box>
+                )}
               </TableCell>
             ))}
           </TableRow>
@@ -96,7 +130,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
                   return (
                     <TableCell
                       key={row.id + column.id + i}
-                      align={column.align || "left"}
+                      align={column.align ?? "left"}
                       sx={{
                         fontSize: "1.1rem",
                         padding: "16px",

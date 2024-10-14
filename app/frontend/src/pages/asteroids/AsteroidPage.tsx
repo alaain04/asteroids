@@ -110,6 +110,19 @@ const AsteroidPage: React.FC = () => {
     setPage(0);
   };
 
+  const handleSort = (columnId: string, isAsc: boolean) => {
+    const sorted = asteroids.sort((a, b) => {
+      const aValue = a[columnId as keyof IAsteroid]!;
+      const bValue = b[columnId as keyof IAsteroid]!;
+      if (aValue < bValue) return isAsc ? -1 : 1;
+      if (aValue > bValue) return isAsc ? 1 : -1;
+      return 0;
+    });
+
+    setAsteroids([...sorted]);
+    setPage(0);
+  };
+
   type AlignType = "center" | "left" | "right" | undefined;
   const columns = [
     {
@@ -126,6 +139,7 @@ const AsteroidPage: React.FC = () => {
       id: "name",
       label: "Name",
       align: "left" as AlignType,
+      sort: true,
       renderCell: (row: IAsteroid) => (
         <Typography fontWeight={600} textAlign={"left"}>
           {row?.name}
@@ -275,13 +289,9 @@ const AsteroidPage: React.FC = () => {
           <DynamicTable
             columns={columns}
             rows={asteroids}
-            styleProps={{
-              backgroundColor: lightColor,
-              borderRadius: "10px",
-              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-            }}
             setPage={setPage}
             page={page}
+            handleSort={handleSort}
           />
         </Grid>
       </Grid>
