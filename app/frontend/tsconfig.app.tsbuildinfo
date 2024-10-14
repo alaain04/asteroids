@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/snackbarcontext.tsx","./src/main.tsx","./src/routes.ts","./src/vite-env.d.ts","./src/api/asteroidapi.ts","./src/components/asteroiddetailmodal.tsx","./src/components/dynamictable.tsx","./src/interfaces/asteroid.ts","./src/pages/error.tsx","./src/pages/asteroids/asteroidpage.tsx"],"version":"5.6.3"}
