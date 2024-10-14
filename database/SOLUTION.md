@@ -22,7 +22,7 @@ category`
 
 ### Solution
 
-`SELECT 
+SELECT 
     u.name AS USER_NAME, 
     u.email AS USER_EMAIL, 
     SUM(p.price * o.quantity) AS TOTAL_AMOUNT
@@ -37,4 +37,4 @@ HAVING
     COUNT(o.id) > 3 
     AND SUM(p.price * o.quantity) > 1000
 ORDER BY 
-    SUM(p.price * o.quantity) DESC;`
+    SUM(p.price * o.quantity) DESC;
