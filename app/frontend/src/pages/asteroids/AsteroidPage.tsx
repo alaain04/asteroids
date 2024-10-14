@@ -30,18 +30,20 @@ const AsteroidPage: React.FC = () => {
   const navigate = useNavigate();
   const [asteroids, setAsteroids] = useState<IAsteroid[]>([]);
   const [selectedAsteroid, setSelectedAsteroid] = useState<IAsteroid>();
-  const [dateFrom, setDateFrom] = useState<string>();
-  const [dateTo, setDateTo] = useState<string>();
+  const [dateFrom, setDateFrom] = useState<string | undefined>(
+    moment().format("YYYY-MM-DD")
+  );
+  const [dateTo, setDateTo] = useState<string | undefined>(
+    moment().subtract(1).format("YYYY-MM-DD")
+  );
   const [justFavs, setJustFavs] = useState<boolean>(false);
+  const [page, setPage] = React.useState(0);
 
   const loadAsteroids = async (callSnackbar: boolean = true) => {
     try {
-      const response = await retrieveAsteroids(
-        dateFrom ?? moment().format("YYYY-MM-DD"),
-        dateTo ?? moment().subtract(1).format("YYYY-MM-DD"),
-        justFavs
-      );
+      const response = await retrieveAsteroids(dateFrom!, dateTo!, justFavs);
       setAsteroids(response);
+
       if (callSnackbar)
         showSnackbar("Asteroids retrieved successfully!", "success");
     } catch (error) {
@@ -103,6 +105,10 @@ const AsteroidPage: React.FC = () => {
   const handleCheckFavs = (value: boolean) => {
     setJustFavs(value);
   };
+  const search = async () => {
+    await loadAsteroids();
+    setPage(0);
+  };
 
   type AlignType = "center" | "left" | "right" | undefined;
   const columns = [
@@ -123,6 +129,15 @@ const AsteroidPage: React.FC = () => {
       renderCell: (row: IAsteroid) => (
         <Typography fontWeight={600} textAlign={"left"}>
           {row?.name}
+        </Typography>
+      ),
+    },
+    {
+      id: "date",
+      label: "Date",
+      renderCell: (row: IAsteroid) => (
+        <Typography fontWeight={600} textAlign={"center"}>
+          {row?.viewing_date}
         </Typography>
       ),
     },
@@ -197,6 +212,7 @@ const AsteroidPage: React.FC = () => {
                 <DatePicker
                   maxDate={moment(dateTo)}
                   sx={datepickerStyle}
+                  value={moment(dateFrom)}
                   onChange={(value) => {
                     setDateFrom(value?.format("YYYY-MM-DD"));
                   }}
@@ -209,6 +225,7 @@ const AsteroidPage: React.FC = () => {
                   maxDate={moment()}
                   minDate={moment(dateFrom)}
                   sx={datepickerStyle}
+                  value={moment(dateTo)}
                   onChange={(value) => setDateTo(value?.format("YYYY-MM-DD"))}
                 />
               </DemoItem>
@@ -241,9 +258,10 @@ const AsteroidPage: React.FC = () => {
             <Grid size={1} display={"flex"} justifyContent={"end"}>
               <Button
                 variant="contained"
+                disabled={!dateTo || !dateFrom}
                 color="primary"
                 size="large"
-                onClick={() => loadAsteroids()}
+                onClick={search}
                 style={{
                   borderRadius: "10px",
                 }}
@@ -262,6 +280,8 @@ const AsteroidPage: React.FC = () => {
               borderRadius: "10px",
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
             }}
+            setPage={setPage}
+            page={page}
           />
         </Grid>
       </Grid>

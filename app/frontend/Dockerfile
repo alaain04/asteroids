@@ -28,6 +28,8 @@ COPY --from=build /app/package.json ./package.json
 
 RUN npm install -g serve
 
+EXPOSE 3000 
+
 ENTRYPOINT [ ]
 
 #Serve 

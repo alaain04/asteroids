@@ -33,6 +33,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
 ]);
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>

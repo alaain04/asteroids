@@ -1,12 +1,13 @@
 import { Button, Container, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import "./App.css";
 
 function App() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleAsteroidsRedirect = () => {
-    navigate("/asteroids");
+    // navigate("/asteroids");
+    window.location.href = "/asteroids";
   };
 
   return (

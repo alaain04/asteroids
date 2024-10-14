@@ -18,11 +18,11 @@
     `pnpm build`
 
 - Run built package
-    `pnpm serve`
+    `pnpm preview`
 
 ### Steps to run the app using Docker
 - Build the image
     `docker build -t frontend .`
 
 - Run the container
-    `docker run -p 4173:4173 frontend`
+    `docker run -p 3000:3000 frontend`

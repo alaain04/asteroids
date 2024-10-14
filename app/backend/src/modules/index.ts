@@ -21,7 +21,7 @@ export default class Routes {
 
             // Iterate over module files
             fs.readdirSync(dirPath).forEach((file) => {
-              if (file.endsWith("routes.ts")) {
+              if (file.includes(".routes.")) {
                 const route = require(path.join(dirPath, file));
                 const module = new route.default();
                 const baseRoutePath = `/${version}/${module.path}`;

@@ -24,14 +24,17 @@ interface DynamicTableProps {
   columns: Column[];
   rows: any[];
   styleProps?: SxProps;
+  setPage: (page: number) => void;
+  page: number;
 }
 
 const DynamicTable: React.FC<DynamicTableProps> = ({
   columns,
   rows,
   styleProps,
+  setPage,
+  page,
 }) => {
-  const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleChangePage = (
@@ -48,85 +51,76 @@ const DynamicTable: React.FC<DynamicTableProps> = ({
     setPage(0);
   };
   return (
-    <>
-      <TableContainer component={Paper} sx={{ ...styleProps }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align || "center"}
-                  sx={{
-                    fontWeight: "bold",
-                    backgroundColor: "#5c5d59",
-                    color: "#fff",
-                    fontSize: "1.2rem",
-                    padding: "16px",
-                  }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
+    <TableContainer component={Paper} sx={{ ...styleProps }}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            {columns.map((column) => (
+              <TableCell
+                key={column.id}
+                align={column.align || "center"}
+                sx={{
+                  fontWeight: "bold",
+                  backgroundColor: "#5c5d59",
+                  color: "#fff",
+                  fontSize: "1.2rem",
+                  padding: "16px",
+                }}
+              >
+                {column.label}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
 
-          <TableBody>
-            {!rows?.length ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  sx={{ textAlign: "center" }}
-                >
-                  <Typography fontSize={14} fontWeight={600}>
-                    No rows available
-                  </Typography>
-                </TableCell>
+        <TableBody>
+          {!rows?.length ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} sx={{ textAlign: "center" }}>
+                <Typography fontSize={14} fontWeight={600}>
+                  No rows available
+                </Typography>
+              </TableCell>
+            </TableRow>
+          ) : (
+            (rowsPerPage > 0
+              ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : rows
+            ).map((row, rowIndex) => (
+              <TableRow
+                key={rowIndex}
+                hover
+                sx={{ "&:hover": { backgroundColor: "#f1f1f1" } }}
+              >
+                {columns.map((column, i) => {
+                  return (
+                    <TableCell
+                      key={row.id + column.id + i}
+                      align={column.align || "left"}
+                      sx={{
+                        fontSize: "1.1rem",
+                        padding: "16px",
+                      }}
+                    >
+                      {column.renderCell(row, column, column.id)}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
-            ) : (
-              (rowsPerPage > 0
-                ? rows.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
-                : rows
-              ).map((row, rowIndex) => (
-                <TableRow
-                  key={rowIndex}
-                  hover
-                  sx={{ "&:hover": { backgroundColor: "#f1f1f1" } }}
-                >
-                  {columns.map((column, i) => {
-                    return (
-                      <TableCell
-                        key={row.id + column.id + i}
-                        align={column.align || "left"}
-                        sx={{
-                          fontSize: "1.1rem",
-                          padding: "16px",
-                        }}
-                      >
-                        {column.renderCell(row, column, column.id)}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 20, { label: "All", value: -1 }]}
-          component="div"
-          count={rows?.length ?? 0}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          // colSpan={3}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </TableContainer>
-    </>
+            ))
+          )}
+        </TableBody>
+      </Table>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 20, { label: "All", value: -1 }]}
+        component="div"
+        count={rows?.length ?? 0}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </TableContainer>
   );
 };
 
