@@ -1,4 +1,4 @@
-## Challenge resolution
+## Resolution
 
 The solution consists on two parts:
 1. The directory `app` contains the application and its documentation to make it run.
